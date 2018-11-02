@@ -1,3 +1,10 @@
+/**
+ * Created by Yiqing Zhu
+ * 2018/10
+ * yiqing.zhu.314@gmail.com
+ */
+
+
 package com.zhuyiqing.pcl;
 
 import java.text.SimpleDateFormat;
@@ -18,6 +25,21 @@ public class ApiCallLog {
         return logCount++;
     }
 
+    public static class SevereLevel {
+        public static final int LOW = 0;
+        public static final int MIDDLE = 1;
+        public static final int HIGH = 2;
+    }
+
+    private static final int DEFAULT_INFORM_LEVEL = SevereLevel.MIDDLE;
+    private static final int DEFAULT_SEVERE_LEVEL = SevereLevel.HIGH;
+
+    private int informLevel = DEFAULT_INFORM_LEVEL;
+
+    private static final int ESTIMATED_LOG_SIZE = 500;
+
+    private ArrayList<callRecord> logs = new ArrayList<>(ESTIMATED_LOG_SIZE);
+
     private class callRecord {
 
         private int recordId;
@@ -25,6 +47,7 @@ public class ApiCallLog {
         private String caller;
         private String callApi;
         private String handleResult;
+        private int severeLevel;
 
         public callRecord(int mRecordId, String mCaller, String mCallApi, String mHandleResult) {
 
@@ -37,6 +60,7 @@ public class ApiCallLog {
             this.caller = mCaller;
             this.callApi = mCallApi;
             this.handleResult = mHandleResult;
+            this.severeLevel = DEFAULT_SEVERE_LEVEL;
         }
 
         public String toString() {
@@ -48,16 +72,19 @@ public class ApiCallLog {
             XposedBridge.log(this.toString());
         }
 
+        public int getRecordId() {
+            return recordId;
+        }
+
+        public void setSevereLevel(int severeLevel) {
+            this.severeLevel = severeLevel;
+        }
     }
-
-    private static final int ESTIMATED_LOG_SIZE = 500;
-
-    private ArrayList<callRecord> logs = new ArrayList<>(ESTIMATED_LOG_SIZE);
 
     public int addRecord(String caller, String callApi, String handleResult) {
         int newId = setId();
         callRecord newRecord = new callRecord(newId, caller, callApi, handleResult);
-        logs.add(newId,newRecord);
+        logs.add(newRecord);
         return newId;
     }
 
@@ -75,10 +102,19 @@ public class ApiCallLog {
         }
     }
 
-    public void printToXposedLog(int id) {
-        if (null != logs.get(id))
-            logs.get(id).printToXposedLog();
+    public void setInformLevel(int severeLevel) {
+        informLevel = severeLevel;
     }
 
+    public callRecord getCallRecord(int id) {
+        callRecord cr = logs.get(id);
+        if (null != cr && cr.getRecordId()==id) {
+            return cr;
+        }
+        for (callRecord record : logs) {
+            if (record.getRecordId() == id) return record;
+        }
+        return null;
+     }
 
 }

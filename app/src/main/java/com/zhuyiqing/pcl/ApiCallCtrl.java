@@ -1,16 +1,26 @@
+/**
+ * Created by Yiqing Zhu
+ * 2018/10
+ * yiqing.zhu.314@gmail.com
+ */
+
+
 package com.zhuyiqing.pcl;
+
 
 public class ApiCallCtrl {
 
-    public enum apiCallCtrlPolicy {
-        ALLOW, BLOCK, FORGE;
+    public static class ApiCallCtrlPolicy {
+        public static final int ALLOW = 0;
+        public static final int BLOCK = 1;
+        public static final int FORGE = 2;
     }
 
-    private static apiCallCtrlPolicy defaultPolicy = apiCallCtrlPolicy.ALLOW;
+    private int defaultPolicy = ApiCallCtrlPolicy.FORGE;
 
-    public apiCallCtrlPolicy getPolicy(String appName, String apiName) {
+    public int getPolicy(String appName, String apiName) {
+
         return defaultPolicy;
     }
-
 
 }
