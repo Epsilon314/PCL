@@ -17,6 +17,9 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 
+
+// will be called from app thread, so don't use anything from Xposed here
+
 public class DbHelper extends SQLiteOpenHelper {
 
     public static final Integer Version = 1;

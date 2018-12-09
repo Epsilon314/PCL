@@ -5,21 +5,26 @@
  */
 
 
-package com.zhuyiqing.pcl;
+package com.zhuyiqing.pcl.HookModule;
+
+
+import com.zhuyiqing.pcl.Utils.LogHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+
 import de.robv.android.xposed.XposedBridge;
 
 public class ApiCallLog {
+
 
     public ApiCallLog() {
 
     }
 
-    static int logCount = 0;
+    private static int logCount = 0;
 
     private int setId() {
         return logCount++;
@@ -39,6 +44,7 @@ public class ApiCallLog {
     private static final int ESTIMATED_LOG_SIZE = 500;
 
     private ArrayList<callRecord> logs = new ArrayList<>(ESTIMATED_LOG_SIZE);
+
 
     private class callRecord {
 
@@ -67,9 +73,17 @@ public class ApiCallLog {
             return callTime + ":" + caller + " " + callApi + " " + handleResult + "\n";
         }
 
+        public String toStringWithoutTimestamp() {
+            return caller + " " + callApi + " " + handleResult + "\n";
+        }
+
 
         public void printToXposedLog() {
-            XposedBridge.log(this.toString());
+            XposedBridge.log(this.toStringWithoutTimestamp());
+        }
+
+        public void printToPclLog() {
+            LogHelper.writeToLogFile(this.toString());
         }
 
         public int getRecordId() {
@@ -95,9 +109,19 @@ public class ApiCallLog {
     }
 
     public void printAllToXposedLog() {
-        for (callRecord log : logs) {
+        for (int i = 0; i < logs.size(); i++) {
+            callRecord log = logs.get(i);
             if (null != log) {
                 log.printToXposedLog();
+            }
+        }
+    }
+
+    public void printAllToPclLog() {
+        for (int i = 0; i < logs.size(); i++) {
+            callRecord log = logs.get(i);
+            if (null != log) {
+                log.printToPclLog();
             }
         }
     }

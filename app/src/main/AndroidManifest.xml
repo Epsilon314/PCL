@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhuyiqing.pcl">
-
+    
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,14 +12,27 @@
 
         <meta-data
             android:name="xposedmodule"
-            android:value="true"/>
+            android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Try to develop xposed module"/>
+            android:value="Try to develop xposed module" />
         <meta-data
             android:name="xposedminversion"
-            android:value="82"/>
+            android:value="82" />
+
+        <activity
+            android:name=".UI.DisplayLog"
+            android:label="@string/title_activity_display_log"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
 
     </application>
+
+
 
 </manifest>

@@ -5,9 +5,11 @@
  */
 
 
-package com.zhuyiqing.pcl;
+package com.zhuyiqing.pcl.HookModule;
+
 
 import com.zhuyiqing.pcl.ApiHooks.NetHook;
+import com.zhuyiqing.pcl.BuildConfig;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
@@ -16,9 +18,9 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class HookMain implements IXposedHookZygoteInit, IXposedHookLoadPackage {
 
-    public ApiCallLog apiCallLog = new ApiCallLog();
     public ApiCallCtrl apiCallCtrl = new ApiCallCtrl();
-    public ForgedReturnValues forgedReturnValues = new ForgedReturnValues();
+    public ApiCallReturnValue apiCallReturnValue = new ApiCallReturnValue();
+
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
@@ -30,7 +32,7 @@ public class HookMain implements IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         //XposedBridge.log("PCL handleLoadPackage" + lpparam.packageName);
 
-        if (lpparam.packageName.equals("android")) {
+        if (lpparam.packageName.startsWith("android")) {
             return;
         }
 
@@ -43,7 +45,9 @@ public class HookMain implements IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private void hookUserApplication(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        NetHook.hookAllNetworkApi(loadPackageParam, apiCallLog, apiCallCtrl, forgedReturnValues);
+
+        NetHook.getInstance().hookAllNetworkApi(loadPackageParam, apiCallCtrl, apiCallReturnValue);
+
     }
 
 
