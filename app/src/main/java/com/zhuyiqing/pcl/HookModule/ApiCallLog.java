@@ -17,6 +17,11 @@ import java.util.Date;
 
 import de.robv.android.xposed.XposedBridge;
 
+
+/**
+ * deprecated class,
+ * Todo: will be merged into LogHelper
+ */
 public class ApiCallLog {
 
 

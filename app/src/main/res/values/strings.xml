@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">PCL</string>
-    <string name="title_activity_display_log">DisplayLog\n</string>
+    <string name="log_title">Logs</string>
+    <string name="settings_title">Settings</string>
+    <string name="save_button">Save</string>
+    <string name="advance_label">Advanced:</string>
 </resources>

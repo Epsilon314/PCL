@@ -7,7 +7,8 @@
 
 package com.zhuyiqing.pcl.HookModule;
 
-import android.net.wifi.WifiInfo;
+import android.content.Context;
+import android.support.v4.util.ArrayMap;
 
 import java.util.HashMap;
 
@@ -20,7 +21,9 @@ public class ApiCallReturnValue {
         public static final int EARLY_FORGE = 3;
     }
 
-    private HashMap<String, Object> currentReturnValueSetting = new HashMap<>();
+    public final static String DO_NOTHING = "doNoThingFlag";
+
+    private ArrayMap<String, Object> currentReturnValueSetting = new ArrayMap<>();
 
     public ApiCallReturnValue() {
         loadSetting();
@@ -60,18 +63,11 @@ public class ApiCallReturnValue {
     }
 
     private void loadDefaultSetting() {
-        currentReturnValueSetting.put("android.net.NetworkInfo.getDetailedState b", null);
-        currentReturnValueSetting.put("android.net.NetworkInfo.getDetailedState f", null);
+
         currentReturnValueSetting.put("android.net.NetworkInfo.getExtraInfo b", "");
         currentReturnValueSetting.put("android.net.NetworkInfo.getExtraInfo f", "MOBILE");
         currentReturnValueSetting.put("android.net.NetworkInfo.isConnected b", false);
         currentReturnValueSetting.put("android.net.NetworkInfo.isConnected f", true);
-        currentReturnValueSetting.put("android.net.ConnectivityManager.getActiveNetworkInfo b", null);
-        currentReturnValueSetting.put("android.net.ConnectivityManager.getActiveNetworkInfo f", null);
-        currentReturnValueSetting.put("android.net.ConnectivityManager.getNetworkInfo b", null);
-        currentReturnValueSetting.put("android.net.ConnectivityManager.getNetworkInfo f", null);
-        currentReturnValueSetting.put("android.net.ConnectivityManager.getDefaultProxy b", null);
-        currentReturnValueSetting.put("android.net.ConnectivityManager.getDefaultProxy f", null);
         currentReturnValueSetting.put("android.net.ConnectivityManager.getRestrictBackgroundStatus b", 3);
         currentReturnValueSetting.put("android.net.ConnectivityManager.getRestrictBackgroundStatus f", 3);
         currentReturnValueSetting.put("android.net.ConnectivityManager.isActiveNetworkMetered b", true);

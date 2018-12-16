@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.zhuyiqing.pcl.R;
 import com.zhuyiqing.pcl.Utils.LogHelper;
 
-public class DisplayLog extends AppCompatActivity {
+public class DisplayLogActivity extends AppCompatActivity {
 
     private static String logString;
 

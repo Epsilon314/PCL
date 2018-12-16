@@ -8,15 +8,21 @@
 package com.zhuyiqing.pcl.HookModule;
 
 
+
+import com.zhuyiqing.pcl.ApiHooks.HttpHook;
 import com.zhuyiqing.pcl.ApiHooks.NetHook;
+import com.zhuyiqing.pcl.ApiHooks.SMSHook;
+import com.zhuyiqing.pcl.ApiHooks.TelephonyHook;
+import com.zhuyiqing.pcl.ApiHooks.WiFiHook;
 import com.zhuyiqing.pcl.BuildConfig;
+import com.zhuyiqing.pcl.Utils.SettingHelper;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-public class HookMain implements IXposedHookZygoteInit, IXposedHookLoadPackage {
+public class HookMain implements IXposedHookZygoteInit, IXposedHookLoadPackage{
 
     public ApiCallCtrl apiCallCtrl = new ApiCallCtrl();
     public ApiCallReturnValue apiCallReturnValue = new ApiCallReturnValue();
@@ -40,13 +46,20 @@ public class HookMain implements IXposedHookZygoteInit, IXposedHookLoadPackage {
             return;
         }
 
+        SettingHelper.savePackageNames(lpparam.packageName);
+
         hookUserApplication(lpparam);
 
     }
 
     private void hookUserApplication(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
 
-        NetHook.getInstance().hookAllNetworkApi(loadPackageParam, apiCallCtrl, apiCallReturnValue);
+        NetHook.getInstance().startHook(loadPackageParam, apiCallCtrl, apiCallReturnValue);
+        WiFiHook.getInstance().startHook(loadPackageParam, apiCallCtrl, apiCallReturnValue);
+        HttpHook.getInstance().startHook(loadPackageParam, apiCallCtrl, apiCallReturnValue);
+        SMSHook.getInstance().startHook(loadPackageParam, apiCallCtrl, apiCallReturnValue);
+        TelephonyHook.getInstance().startHook(loadPackageParam, apiCallCtrl, apiCallReturnValue);
+
 
     }
 
