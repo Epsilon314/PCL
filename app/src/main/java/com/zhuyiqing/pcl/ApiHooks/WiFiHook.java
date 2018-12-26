@@ -1,6 +1,16 @@
+/**
+ * Created by Yiqing Zhu
+ * 2018/12
+ * yiqing.zhu.314@gmail.com
+ */
+
+
+
+
 package com.zhuyiqing.pcl.ApiHooks;
 
 import com.zhuyiqing.pcl.HookModule.ApiCallCtrl;
+import com.zhuyiqing.pcl.HookModule.ApiCallLog;
 import com.zhuyiqing.pcl.HookModule.ApiCallReturnValue;
 
 import de.robv.android.xposed.XposedHelpers;
@@ -12,72 +22,72 @@ public class WiFiHook implements HookBase{
         return new WiFiHook();
     }
 
-    public void startHook(final XC_LoadPackage.LoadPackageParam loadPackageParam,
-                                   ApiCallCtrl apiCallCtrl,
-                                   ApiCallReturnValue apiCallReturnValue) {
+    public void startHook(final XC_LoadPackage.LoadPackageParam lpparm,
+                          ApiCallCtrl ctrl,
+                          ApiCallReturnValue returnValue) {
 
-        final String packageName = loadPackageParam.packageName;
+        final String packageName = lpparm.packageName;
 
         Class<?> wifiConfigurationClass = XposedHelpers.findClass(
-                "android.net.wifi.WifiConfiguration", loadPackageParam.classLoader);
+                "android.net.wifi.WifiConfiguration", lpparm.classLoader);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiManager", lpparm.classLoader,
                 "addNetwork", wifiConfigurationClass);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiManager", lpparm.classLoader,
                 "disconnect", null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiManager", lpparm.classLoader,
                 "getConfiguredNetworks", null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiManager", lpparm.classLoader,
                 "getWifiState", null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiManager", lpparm.classLoader,
                 "isWifiEnabled", null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiManager", lpparm.classLoader,
                 "reconnect", null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiManager", lpparm.classLoader,
                 "removeNetwork", int.class);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiManager", lpparm.classLoader,
                 "setWifiEnabled", boolean.class);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiManager", lpparm.classLoader,
                 "updateNetwork", wifiConfigurationClass);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiInfo", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiInfo", lpparm.classLoader,
                 "getBSSID", null);
 
         Class<?> supplicantStateClass = XposedHelpers.findClass(
-                "android.net.wifi.SupplicantState", loadPackageParam.classLoader);
+                "android.net.wifi.SupplicantState", lpparm.classLoader);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiInfo", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiInfo", lpparm.classLoader,
                 "getDetailedStateOf", supplicantStateClass);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiInfo", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiInfo", lpparm.classLoader,
                 "getIpAddress", null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiInfo", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiInfo", lpparm.classLoader,
                 "getMacAddress", null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.wifi.WifiInfo", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.wifi.WifiInfo", lpparm.classLoader,
                 "getSSID", null);
     }
 

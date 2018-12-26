@@ -93,6 +93,7 @@ public class ApiCallCtrl {
     private void loadPolicy() {
         loadDefaultPolicy();
         loadSavedSetting();
+        saveSetting();
     }
 
     private void loadHelper(String key, int ctrlPolicy, int logPolicy) {
@@ -122,6 +123,7 @@ public class ApiCallCtrl {
             }
         }
     }
+
 
     private void loadDefaultPolicy() {
 
@@ -153,6 +155,12 @@ public class ApiCallCtrl {
         loadHelper("* android.content.ContextWrapper.startActivityandroid.intent.action.CALL", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
         loadHelper("* android.content.ContextWrapper.startActivityandroid.intent.action.NEW_OUTGOING_CALL", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
         loadHelper("* android.content.ContextWrapper.startActivityandroid.intent.action.DIAL", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
+        loadHelper("* java.net.HttpURLConnection", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
+        loadHelper("* android.telephony.TelephonyManager.listen", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
+        loadHelper("* android.location.Location.getLatitude", ApiCallCtrlPolicy.FORGE, LogInformLevel.HIGH);
+        loadHelper("* android.location.Location.getLongitude", ApiCallCtrlPolicy.FORGE, LogInformLevel.HIGH);
+        loadHelper("* android.provider.Settings.Secure.getString.ANDROID_ID", ApiCallCtrlPolicy.FORGE, LogInformLevel.HIGH);
+        loadHelper("* android.telephony.TelephonyManager.getDeviceId", ApiCallCtrlPolicy.FORGE, LogInformLevel.HIGH);
     }
 
     public static String[] CtrlApiList = {
@@ -183,7 +191,13 @@ public class ApiCallCtrl {
             "android.telephony.SmsManager.sendTextMessage",
             "android.content.ContextWrapper.startActivityandroid.intent.action.CALL",
             "android.content.ContextWrapper.startActivityandroid.intent.action.NEW_OUTGOING_CALL",
-            "android.content.ContextWrapper.startActivityandroid.intent.action.DIAL"
+            "android.content.ContextWrapper.startActivityandroid.intent.action.DIAL",
+            "java.net.HttpURLConnection",
+            "android.telephony.TelephonyManager.listen",
+            "android.location.Location.getLatitude",
+            "android.location.Location.getLongitude",
+            "android.provider.Settings.Secure.getString.ANDROID_ID",
+            "android.telephony.TelephonyManager.getDeviceId",
     };
 
 

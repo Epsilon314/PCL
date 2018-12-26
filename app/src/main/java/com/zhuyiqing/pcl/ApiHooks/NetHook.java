@@ -10,6 +10,8 @@ package com.zhuyiqing.pcl.ApiHooks;
 
 
 import com.zhuyiqing.pcl.HookModule.ApiCallCtrl;
+import com.zhuyiqing.pcl.HookModule.ApiCallCtrl.*;
+import com.zhuyiqing.pcl.HookModule.ApiCallLog;
 import com.zhuyiqing.pcl.HookModule.ApiCallReturnValue;
 
 import java.net.InetAddress;
@@ -29,50 +31,50 @@ public class NetHook implements HookBase{
     }
 
 
-    public void startHook (final XC_LoadPackage.LoadPackageParam loadPackageParam,
-                                   ApiCallCtrl apiCallCtrl,
-                                   ApiCallReturnValue apiCallReturnValue) throws Throwable{
+    public void startHook (final XC_LoadPackage.LoadPackageParam lpparm,
+                           ApiCallCtrl ctrl,
+                           ApiCallReturnValue returnValue) throws Throwable{
 
         //XposedBridge.log("Network");
 
-        final String packageName = loadPackageParam.packageName;
+        final String packageName = lpparm.packageName;
 
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.NetworkInfo", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.NetworkInfo", lpparm.classLoader,
                 "getDetailedState",  null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.NetworkInfo", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.NetworkInfo", lpparm.classLoader,
                 "getExtraInfo", null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.NetworkInfo", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.NetworkInfo", lpparm.classLoader,
                 "isConnected",  null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.ConnectivityManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.ConnectivityManager", lpparm.classLoader,
                 "getActiveNetworkInfo",  null);
 
         Class<?> networkClass = XposedHelpers.findClass("android.net.Network",
-                loadPackageParam.classLoader);
+                lpparm.classLoader);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.ConnectivityManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.ConnectivityManager", lpparm.classLoader,
                 "getNetworkInfo", networkClass);
 
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.ConnectivityManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.ConnectivityManager", lpparm.classLoader,
                 "getDefaultProxy",  null);
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.ConnectivityManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.ConnectivityManager", lpparm.classLoader,
                 "getRestrictBackgroundStatus",  null);
 
 
-        HookMethod.startHook(apiCallCtrl, apiCallReturnValue, packageName,
-                "android.net.ConnectivityManager", loadPackageParam.classLoader,
+        HookMethod.startHook(ctrl, returnValue, packageName,
+                "android.net.ConnectivityManager", lpparm.classLoader,
                 "isActiveNetworkMetered",  null);
 
 
@@ -84,15 +86,15 @@ public class NetHook implements HookBase{
         // representing the loopback address which stop its original intent
         // Todo: check related AOSP code to find more delicate hook ways to do this
 
-        final Boolean logOn1 = apiCallCtrl.getInformPolicy(packageName, "java.net.InetAddress.getAllByName"
+        final Boolean logOn1 = ctrl.getInformPolicy(packageName, "java.net.InetAddress.getAllByName"
                 , String.class);
 
-        switch (apiCallCtrl.getPolicy(packageName, "java.net.InetAddress.getAllByName",
+        switch (ctrl.getPolicy(packageName, "java.net.InetAddress.getAllByName",
                 String.class)) {
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.ALLOW:
+            case ApiCallCtrlPolicy.ALLOW:
 
-                XposedHelpers.findAndHookMethod("java.net.InetAddress", loadPackageParam.classLoader,
+                XposedHelpers.findAndHookMethod("java.net.InetAddress", lpparm.classLoader,
                         "getAllByName", String.class, new XC_MethodHook() {
 
                             @Override
@@ -106,14 +108,14 @@ public class NetHook implements HookBase{
 
                 break;
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.FORGE:
+            case ApiCallCtrlPolicy.FORGE:
 
                 // same treat as block
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.BLOCK:
+            case ApiCallCtrlPolicy.BLOCK:
 
 
-                XposedHelpers.findAndHookMethod("java.net.InetAddress", loadPackageParam.classLoader,
+                XposedHelpers.findAndHookMethod("java.net.InetAddress", lpparm.classLoader,
                         "getAllByName", String.class, new XC_MethodHook() {
 
                     @Override
@@ -129,15 +131,15 @@ public class NetHook implements HookBase{
                 break;
         }
 
-        final Boolean logOn2 = apiCallCtrl.getInformPolicy(packageName, "java.net.InetAddress.getByName"
+        final Boolean logOn2 = ctrl.getInformPolicy(packageName, "java.net.InetAddress.getByName"
                 , String.class);
 
-        switch (apiCallCtrl.getPolicy(packageName, "java.net.InetAddress.getByName",
+        switch (ctrl.getPolicy(packageName, "java.net.InetAddress.getByName",
                 String.class)) {
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.ALLOW:
+            case ApiCallCtrlPolicy.ALLOW:
 
-                XposedHelpers.findAndHookMethod("java.net.InetAddress", loadPackageParam.classLoader,
+                XposedHelpers.findAndHookMethod("java.net.InetAddress", lpparm.classLoader,
                         "getByName", String.class, new XC_MethodHook() {
 
                     @Override
@@ -151,14 +153,14 @@ public class NetHook implements HookBase{
 
                 break;
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.FORGE:
+            case ApiCallCtrlPolicy.FORGE:
 
                 // same treat as block
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.BLOCK:
+            case ApiCallCtrlPolicy.BLOCK:
 
 
-                XposedHelpers.findAndHookMethod("java.net.InetAddress", loadPackageParam.classLoader,
+                XposedHelpers.findAndHookMethod("java.net.InetAddress", lpparm.classLoader,
                         "getByName", String.class, new XC_MethodHook() {
 
                     @Override
@@ -174,16 +176,16 @@ public class NetHook implements HookBase{
         }
 
 
-        final Boolean logOn3 = apiCallCtrl.getInformPolicy(packageName, "java.net.NetworkInterface.getByInetAddress"
+        final Boolean logOn3 = ctrl.getInformPolicy(packageName, "java.net.NetworkInterface.getByInetAddress"
                 , String.class);
-        Class<?> inetAddressClass = XposedHelpers.findClass("java.net.InetAddress", loadPackageParam.classLoader);
+        Class<?> inetAddressClass = XposedHelpers.findClass("java.net.InetAddress", lpparm.classLoader);
 
-        switch (apiCallCtrl.getPolicy(packageName, "java.net.NetworkInterface.getByInetAddress",
+        switch (ctrl.getPolicy(packageName, "java.net.NetworkInterface.getByInetAddress",
                 inetAddressClass)) {
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.ALLOW:
+            case ApiCallCtrlPolicy.ALLOW:
 
-                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", loadPackageParam.classLoader,
+                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", lpparm.classLoader,
                         "getByInetAddress", inetAddressClass, new XC_MethodHook() {
 
                             @Override
@@ -196,13 +198,13 @@ public class NetHook implements HookBase{
 
                 break;
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.FORGE:
+            case ApiCallCtrlPolicy.FORGE:
 
                 // same treat as block
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.BLOCK:
+            case ApiCallCtrlPolicy.BLOCK:
 
-                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", loadPackageParam.classLoader,
+                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", lpparm.classLoader,
                         "getByInetAddress", inetAddressClass, new XC_MethodHook() {
 
                             @Override
@@ -217,14 +219,14 @@ public class NetHook implements HookBase{
                 break;
         }
 
-        final Boolean logOn4 = apiCallCtrl.getInformPolicy(packageName, "java.net.NetworkInterface.getByName"
+        final Boolean logOn4 = ctrl.getInformPolicy(packageName, "java.net.NetworkInterface.getByName"
                 , String.class);
-        switch (apiCallCtrl.getPolicy(packageName, "java.net.NetworkInterface.getByName",
+        switch (ctrl.getPolicy(packageName, "java.net.NetworkInterface.getByName",
                 String.class)) {
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.ALLOW:
+            case ApiCallCtrlPolicy.ALLOW:
 
-                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", loadPackageParam.classLoader,
+                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", lpparm.classLoader,
                         "getByName", String.class, new XC_MethodHook() {
 
                             @Override
@@ -237,13 +239,13 @@ public class NetHook implements HookBase{
 
                 break;
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.FORGE:
+            case ApiCallCtrlPolicy.FORGE:
 
                 // same treat as block
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.BLOCK:
+            case ApiCallCtrlPolicy.BLOCK:
 
-                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", loadPackageParam.classLoader,
+                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", lpparm.classLoader,
                         "getByName", String.class, new XC_MethodHook() {
 
                             @Override
@@ -259,14 +261,14 @@ public class NetHook implements HookBase{
         }
 
 
-        final Boolean logOn5 = apiCallCtrl.getInformPolicy(packageName, "java.net.NetworkInterface.getNetworkInterfaces"
+        final Boolean logOn5 = ctrl.getInformPolicy(packageName, "java.net.NetworkInterface.getNetworkInterfaces"
                 , String.class);
-        switch (apiCallCtrl.getPolicy(packageName, "java.net.NetworkInterface.getNetworkInterfaces",
+        switch (ctrl.getPolicy(packageName, "java.net.NetworkInterface.getNetworkInterfaces",
                 inetAddressClass)) {
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.ALLOW:
+            case ApiCallCtrlPolicy.ALLOW:
 
-                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", loadPackageParam.classLoader,
+                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", lpparm.classLoader,
                         "getNetworkInterfaces", new XC_MethodHook() {
 
                             @Override
@@ -279,22 +281,22 @@ public class NetHook implements HookBase{
 
                 break;
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.FORGE:
+            case ApiCallCtrlPolicy.FORGE:
 
                 // same treat as block
 
-            case ApiCallCtrl.ApiCallCtrlPolicy.BLOCK:
+            case ApiCallCtrlPolicy.BLOCK:
 
-                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", loadPackageParam.classLoader,
+                XposedHelpers.findAndHookMethod("java.net.NetworkInterface", lpparm.classLoader,
                         "getNetworkInterfaces", new XC_MethodHook() {
 
                             @Override
                             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 
                                 Class networkInterfaceClass = XposedHelpers.findClass("java.net.NetworkInterface",
-                                        loadPackageParam.classLoader);
+                                        lpparm.classLoader);
 
-                                Class inetAddressClass = XposedHelpers.findClass("java.net.InetAddress", loadPackageParam.classLoader);
+                                Class inetAddressClass = XposedHelpers.findClass("java.net.InetAddress", lpparm.classLoader);
 
                                 InetAddress loopbackAddress =(InetAddress) XposedHelpers.callStaticMethod(inetAddressClass,
                                         "getByName", null);

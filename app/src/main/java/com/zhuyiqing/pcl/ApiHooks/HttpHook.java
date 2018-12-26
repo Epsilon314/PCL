@@ -1,3 +1,12 @@
+/**
+ * Created by Yiqing Zhu
+ * 2018/12
+ * yiqing.zhu.314@gmail.com
+ */
+
+
+
+
 package com.zhuyiqing.pcl.ApiHooks;
 
 import java.io.OutputStream;
@@ -20,14 +29,14 @@ public class HttpHook implements HookBase{
     }
 
     @Override
-    public void startHook(XC_LoadPackage.LoadPackageParam loadPackageParam, ApiCallCtrl apiCallCtrl, ApiCallReturnValue apiCallReturnValue) {
+    public void startHook(XC_LoadPackage.LoadPackageParam lpparm, ApiCallCtrl ctrl, ApiCallReturnValue returnValue) {
 
-        final String packageName = loadPackageParam.packageName;
+        final String packageName = lpparm.packageName;
 
         final Class<?> httpUrlConn = XposedHelpers.findClass("java.net.HttpURLConnection",
-                loadPackageParam.classLoader);
+                lpparm.classLoader);
 
-        final boolean logOn = apiCallCtrl.getInformPolicy(packageName, "java.net.HttpURLConnection");
+        final boolean logOn = ctrl.getInformPolicy(packageName, "java.net.HttpURLConnection");
 
 
         XposedBridge.hookAllConstructors(httpUrlConn, new XC_MethodHook() {
@@ -45,7 +54,7 @@ public class HttpHook implements HookBase{
 
         });
 
-        XposedHelpers.findAndHookMethod("java.io.OutputStream", loadPackageParam.classLoader, "write", byte[].class,int.class,int.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("java.io.OutputStream", lpparm.classLoader, "write", byte[].class,int.class,int.class, new XC_MethodHook() {
 
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -62,7 +71,7 @@ public class HttpHook implements HookBase{
         });
 
 
-        XposedHelpers.findAndHookMethod("java.io.OutputStream", loadPackageParam.classLoader, "write", byte[].class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("java.io.OutputStream", lpparm.classLoader, "write", byte[].class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 OutputStream os = (OutputStream)param.thisObject;

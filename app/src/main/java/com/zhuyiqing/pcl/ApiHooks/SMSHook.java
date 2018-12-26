@@ -1,3 +1,12 @@
+/**
+ * Created by Yiqing Zhu
+ * 2018/12
+ * yiqing.zhu.314@gmail.com
+ */
+
+
+
+
 package com.zhuyiqing.pcl.ApiHooks;
 
 import com.zhuyiqing.pcl.HookModule.ApiCallCtrl;
@@ -14,26 +23,26 @@ public class SMSHook implements HookBase{
         return new SMSHook();
     }
 
-    public void startHook (final XC_LoadPackage.LoadPackageParam loadPackageParam,
-                                   ApiCallCtrl apiCallCtrl,
-                                   ApiCallReturnValue apiCallReturnValue) throws Throwable{
+    public void startHook (final XC_LoadPackage.LoadPackageParam lpparm,
+                           ApiCallCtrl ctrl,
+                           ApiCallReturnValue returnValue) throws Throwable{
 
-        final String packageName = loadPackageParam.packageName;
+        final String packageName = lpparm.packageName;
 
 
-        Class<?> pendingIntentClass = XposedHelpers.findClass("android.app.PendingIntent", loadPackageParam.classLoader);
+        Class<?> pendingIntentClass = XposedHelpers.findClass("android.app.PendingIntent", lpparm.classLoader);
 
-        final Boolean logOnTextMessage = apiCallCtrl.getInformPolicy(packageName,
+        final Boolean logOnTextMessage = ctrl.getInformPolicy(packageName,
                 "android.telephony.SmsManager.sendTextMessage", String.class, String.class,
                 String.class, pendingIntentClass, pendingIntentClass);
 
-        switch (apiCallCtrl.getPolicy(packageName, "android.telephony.SmsManager.sendTextMessage",
+        switch (ctrl.getPolicy(packageName, "android.telephony.SmsManager.sendTextMessage",
                 String.class, String.class, String.class, pendingIntentClass, pendingIntentClass)) {
 
             case ApiCallCtrl.ApiCallCtrlPolicy.ALLOW:
 
                 XposedHelpers.findAndHookMethod("android.telephony.SmsManager",
-                        loadPackageParam.classLoader, "sendTextMessage",
+                        lpparm.classLoader, "sendTextMessage",
                         String.class, String.class, String.class, pendingIntentClass, pendingIntentClass, new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -46,6 +55,8 @@ public class SMSHook implements HookBase{
                             XposedBridge.log(packageName + " android.telephony.SmsManager.sendTextMessage \n" +
                                     "Destination Address:" + destAddress + "\nSource Address:" +
                                     sourceAddress + "\n Content:\n" + textToBeSent + "\n" + "Allowed");
+
+
                         }
                     }
                 });
@@ -55,7 +66,7 @@ public class SMSHook implements HookBase{
             case ApiCallCtrl.ApiCallCtrlPolicy.BLOCK:
 
                 XposedHelpers.findAndHookMethod("android.telephony.SmsManager",
-                        loadPackageParam.classLoader, "sendTextMessage",
+                        lpparm.classLoader, "sendTextMessage",
                         String.class, String.class, String.class, pendingIntentClass, pendingIntentClass, new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -67,6 +78,7 @@ public class SMSHook implements HookBase{
                             XposedBridge.log(packageName + " android.telephony.SmsManager.sendTextMessage \n" +
                                 "Destination Address:" + destAddress + "\nSource Address:" +
                                 sourceAddress + "\n Content:\n" + textToBeSent +"\n" + "Blocked");
+
                         }
 
                         param.setResult(null);
@@ -79,17 +91,17 @@ public class SMSHook implements HookBase{
 
 
 
-        final Boolean logOnDataMessage = apiCallCtrl.getInformPolicy(packageName,
+        final Boolean logOnDataMessage = ctrl.getInformPolicy(packageName,
                 "android.telephony.SmsManager.sendDataMessage", String.class, String.class,
                 short.class, byte[].class, pendingIntentClass, pendingIntentClass);
 
-        switch (apiCallCtrl.getPolicy(packageName, "android.telephony.SmsManager.sendDataMessage",
+        switch (ctrl.getPolicy(packageName, "android.telephony.SmsManager.sendDataMessage",
                 String.class, String.class, short.class, byte[].class, pendingIntentClass, pendingIntentClass)) {
 
             case ApiCallCtrl.ApiCallCtrlPolicy.ALLOW:
 
                 XposedHelpers.findAndHookMethod("android.telephony.SmsManager",
-                        loadPackageParam.classLoader, "sendDataMessage",
+                        lpparm.classLoader, "sendDataMessage",
                         String.class, String.class, short.class, byte[].class, pendingIntentClass, pendingIntentClass, new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -110,7 +122,7 @@ public class SMSHook implements HookBase{
             case ApiCallCtrl.ApiCallCtrlPolicy.FORGE:
             case ApiCallCtrl.ApiCallCtrlPolicy.BLOCK:
                 XposedHelpers.findAndHookMethod("android.telephony.SmsManager",
-                        loadPackageParam.classLoader, "sendDataMessage",
+                        lpparm.classLoader, "sendDataMessage",
                         String.class, String.class, short.class, byte[].class, pendingIntentClass, pendingIntentClass, new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {

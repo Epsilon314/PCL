@@ -1,3 +1,12 @@
+/**
+ * Created by Yiqing Zhu
+ * 2018/12
+ * yiqing.zhu.314@gmail.com
+ */
+
+
+
+
 package com.zhuyiqing.pcl.Utils;
 
 import java.io.DataOutputStream;
@@ -74,7 +83,13 @@ public class FileHelper {
         if (!getRoot(filePath)) {
             return "permission denied\n";
         }
-        if (!getRoot(fileFullName)) {
+
+        return readFileByPath(fileFullName);
+    }
+
+    protected static String readFileByPath(String fileName) {
+
+        if (!getRoot(fileName)) {
             return "permission denied\n";
         }
 
@@ -82,7 +97,7 @@ public class FileHelper {
 
         try {
 
-            File logFile = new File(fileFullName);
+            File logFile = new File(fileName);
             FileInputStream fileInputStream = new FileInputStream(logFile);
             byte[] bytes = new byte[fileInputStream.available()];
             fileInputStream.read(bytes);
@@ -90,11 +105,11 @@ public class FileHelper {
             fileInputStream.close();
 
         } catch (Exception e) {
-            /*e.printStackTrace();
+            e.printStackTrace();
             res = e.getMessage() + "\n";
             for (StackTraceElement m : e.getStackTrace()) {
                 res += m.toString() + "\n";
-            }*/
+            }
         }
 
         return res;

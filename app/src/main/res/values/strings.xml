@@ -4,4 +4,8 @@
     <string name="settings_title">Settings</string>
     <string name="save_button">Save</string>
     <string name="advance_label">Advanced:</string>
+    <string name="packageName">Package Name</string>
+    <string name="system_method">System Method</string>
+    <string name="policy">Policy</string>
+    <string name="inform">Inform</string>
 </resources>

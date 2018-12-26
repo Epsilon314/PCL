@@ -8,9 +8,10 @@
 package com.zhuyiqing.pcl.HookModule;
 
 
-
 import com.zhuyiqing.pcl.ApiHooks.HttpHook;
+import com.zhuyiqing.pcl.ApiHooks.LocationHook;
 import com.zhuyiqing.pcl.ApiHooks.NetHook;
+import com.zhuyiqing.pcl.ApiHooks.PhoneIDHook;
 import com.zhuyiqing.pcl.ApiHooks.SMSHook;
 import com.zhuyiqing.pcl.ApiHooks.TelephonyHook;
 import com.zhuyiqing.pcl.ApiHooks.WiFiHook;
@@ -24,8 +25,9 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class HookMain implements IXposedHookZygoteInit, IXposedHookLoadPackage{
 
-    public ApiCallCtrl apiCallCtrl = new ApiCallCtrl();
-    public ApiCallReturnValue apiCallReturnValue = new ApiCallReturnValue();
+    public ApiCallCtrl ctrl = new ApiCallCtrl();
+    public ApiCallReturnValue returnValue = new ApiCallReturnValue();
+    public ApiCallLog log = new ApiCallLog();
 
 
     @Override
@@ -54,12 +56,13 @@ public class HookMain implements IXposedHookZygoteInit, IXposedHookLoadPackage{
 
     private void hookUserApplication(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
 
-        NetHook.getInstance().startHook(loadPackageParam, apiCallCtrl, apiCallReturnValue);
-        WiFiHook.getInstance().startHook(loadPackageParam, apiCallCtrl, apiCallReturnValue);
-        HttpHook.getInstance().startHook(loadPackageParam, apiCallCtrl, apiCallReturnValue);
-        SMSHook.getInstance().startHook(loadPackageParam, apiCallCtrl, apiCallReturnValue);
-        TelephonyHook.getInstance().startHook(loadPackageParam, apiCallCtrl, apiCallReturnValue);
-
+        NetHook.getInstance().startHook(loadPackageParam, ctrl, returnValue);
+        WiFiHook.getInstance().startHook(loadPackageParam, ctrl, returnValue);
+        HttpHook.getInstance().startHook(loadPackageParam, ctrl, returnValue);
+        SMSHook.getInstance().startHook(loadPackageParam, ctrl, returnValue);
+        TelephonyHook.getInstance().startHook(loadPackageParam, ctrl, returnValue);
+        LocationHook.getInstance().startHook(loadPackageParam, ctrl, returnValue);
+        PhoneIDHook.getInstance().startHook(loadPackageParam, ctrl, returnValue);
 
     }
 

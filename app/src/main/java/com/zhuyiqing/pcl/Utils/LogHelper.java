@@ -18,7 +18,9 @@ import java.util.Date;
 
 public class LogHelper extends FileHelper{
 
-    private static final String fileName = "/log";
+    private static final String fileName = "/log1";
+    private static final String backupFileName = "/log2";
+    private static final String XposedLogFilePath = "/data/data/de.robv.android.xposed.installer/log/error.log";
 
     public static void writeToLogFile(String item) {
         writeFileAppend(item,fileName);
@@ -26,6 +28,10 @@ public class LogHelper extends FileHelper{
 
     public static String readLogFile() {
         return readFile(fileName);
+    }
+
+    public static String readXposedLogFile() {
+        return readFileByPath(XposedLogFilePath);
     }
 
     public static String generateLog(String caller, String callApi, String handleResult) {
@@ -37,6 +43,12 @@ public class LogHelper extends FileHelper{
 
     public static void generateAndWriteLog(String caller, String callApi, String handleResult) {
         writeToLogFile(generateLog(caller,callApi,handleResult));
+    }
+
+    public static void cleanLog() {
+        String temp = readFile(fileName);
+        writeFileReplace("", fileName);
+        writeFileReplace(temp, backupFileName);
     }
 
 }

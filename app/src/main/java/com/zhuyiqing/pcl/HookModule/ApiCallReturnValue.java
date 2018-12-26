@@ -7,10 +7,9 @@
 
 package com.zhuyiqing.pcl.HookModule;
 
-import android.content.Context;
+
 import android.support.v4.util.ArrayMap;
 
-import java.util.HashMap;
 
 public class ApiCallReturnValue {
 
@@ -86,6 +85,9 @@ public class ApiCallReturnValue {
         currentReturnValueSetting.put("android.net.wifi.WifiManager.updateNetwork eb", -1);
         currentReturnValueSetting.put("android.net.wifi.WifiInfo.getBSSID f", "06:06:06:06:06:06");
         currentReturnValueSetting.put("android.net.wifi.WifiInfo.getSSID f", "makeupsomething");
-
+        currentReturnValueSetting.put("android.location.Location.getLongitude f", 0.0);
+        currentReturnValueSetting.put("android.location.Location.getLatitude f", 0.0);
+        currentReturnValueSetting.put("android.provider.Settings.Secure.getString.ANDROID_ID f", "TestAndroidID");
+        currentReturnValueSetting.put("android.telephony.TelephonyManager.getDeviceId f", "TestIMEI");
     }
 }

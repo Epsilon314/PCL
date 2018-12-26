@@ -8,6 +8,7 @@
 package com.zhuyiqing.pcl.Utils;
 
 
+import java.util.Vector;
 
 public class SettingHelper extends FileHelper{
 
@@ -17,6 +18,10 @@ public class SettingHelper extends FileHelper{
 
     public static void saveSettingFile(String item) {
         writeFileReplace(item, fileName);
+    }
+
+    public static void saveSettingFileAppend(String item) {
+        writeFileAppend(item, fileName);
     }
 
     public static String readSettingFile() {
@@ -29,6 +34,7 @@ public class SettingHelper extends FileHelper{
 
     public static String[] readPackageName() {
         String packageNames = readFile(packageNameFileName);
+
         if (packageNames == null || packageNames.length() <= 1) {
             packageNames = readFile(packageTempFileName);
         }
@@ -37,7 +43,25 @@ public class SettingHelper extends FileHelper{
             writeFileReplace("", packageNameFileName);
         }
         if (null != packageNames) {
-            return packageNames.split(",");
+
+            packageNames = "*,"+packageNames;
+            Vector<String> ret = new Vector<>();
+            for (String s : packageNames.split(",")) {
+
+                Boolean dupFlag = false;
+                for (int i = 0; i < ret.size(); i++) {
+                    if (s==ret.get(i)) {
+                        dupFlag = true;
+                        break;
+                    }
+                }
+                if (!dupFlag) ret.add(s);
+            }
+            String[] res = new String[ret.size()];
+            for (int i = 0; i < ret.size(); i++) {
+                res[i] = ret.get(i);
+            }
+            return res;
         }
         else  return null;
     }

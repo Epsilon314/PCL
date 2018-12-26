@@ -1,3 +1,12 @@
+/**
+ * Created by Yiqing Zhu
+ * 2018/11
+ * yiqing.zhu.314@gmail.com
+ */
+
+
+
+
 package com.zhuyiqing.pcl.UI;
 
 import android.os.Bundle;
@@ -6,6 +15,7 @@ import android.widget.TextView;
 
 import com.zhuyiqing.pcl.R;
 import com.zhuyiqing.pcl.Utils.LogHelper;
+import com.zhuyiqing.pcl.Utils.SettingHelper;
 
 public class DisplayLogActivity extends AppCompatActivity {
 
@@ -16,7 +26,9 @@ public class DisplayLogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_log);
 
-        freshLogString();
+        //freshLogString();
+        logString = SettingHelper.readSettingFile();
+        //logString = LogHelper.readXposedLogFile();
 
         TextView logTextView = findViewById(R.id.logText);
 

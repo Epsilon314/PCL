@@ -1,9 +1,19 @@
+/**
+ * Created by Yiqing Zhu
+ * 2018/12
+ * yiqing.zhu.314@gmail.com
+ */
+
+
+
+
 package com.zhuyiqing.pcl.ApiHooks;
 
 
 import android.content.Intent;
 
 import com.zhuyiqing.pcl.HookModule.ApiCallCtrl;
+import com.zhuyiqing.pcl.HookModule.ApiCallLog;
 import com.zhuyiqing.pcl.HookModule.ApiCallReturnValue;
 
 
@@ -18,21 +28,62 @@ public class TelephonyHook implements HookBase{
         return new TelephonyHook();
     }
 
-    public void startHook(final XC_LoadPackage.LoadPackageParam loadPackageParam,
-                                    ApiCallCtrl apiCallCtrl,
-                                    ApiCallReturnValue apiCallReturnValue) throws Throwable{
+    public void startHook(final XC_LoadPackage.LoadPackageParam lpparm,
+                          ApiCallCtrl ctrl,
+                          ApiCallReturnValue returnValue) throws Throwable{
 
-        final String packageName = loadPackageParam.packageName;
+        final String packageName = lpparm.packageName;
 
         String[] targetIntentAction = {Intent.ACTION_CALL, Intent.ACTION_DIAL, Intent.ACTION_NEW_OUTGOING_CALL};
 
         for (String intentAction : targetIntentAction) {
-            if (apiCallCtrl.getPolicy(packageName,
+            if (ctrl.getPolicy(packageName,
                     "android.content.ContextWrapper.startActivity" + intentAction,
                     Intent.class)!=ApiCallCtrl.ApiCallCtrlPolicy.ALLOW) {
-                StartActivityHook.hookStartActivity(loadPackageParam.classLoader, Intent.ACTION_DIAL, packageName, true, true);
+                StartActivityHook.hookStartActivity(lpparm.classLoader, Intent.ACTION_DIAL, packageName, true, true);
             }
-            StartActivityHook.hookStartActivity(loadPackageParam.classLoader, Intent.ACTION_DIAL, packageName,true,false);
+            StartActivityHook.hookStartActivity(lpparm.classLoader, Intent.ACTION_DIAL, packageName,true,false);
+        }
+
+
+        Class<?> phoneStateListenerClass = XposedHelpers.findClass("android.telephony.PhoneStateListener",
+                lpparm.classLoader);
+
+        final Boolean logOn = ctrl.getInformPolicy(packageName, "android.telephony.TelephonyManager.listen",
+                phoneStateListenerClass, int.class);
+
+        switch(ctrl.getPolicy(packageName, "android.telephony.TelephonyManager.listen",
+                phoneStateListenerClass, int.class)) {
+
+            case ApiCallCtrl.ApiCallCtrlPolicy.ALLOW:
+                if (logOn) {
+                    XposedHelpers.findAndHookMethod("android.telephony.TelephonyManager",
+                            lpparm.classLoader, "listen", phoneStateListenerClass, int.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            XposedBridge.log(packageName + " android.telephony.TelephonyManager.listen Allowed\n");
+                        }
+                    });
+                }
+                break;
+            case ApiCallCtrl.ApiCallCtrlPolicy.FORGE:
+            case ApiCallCtrl.ApiCallCtrlPolicy.BLOCK:
+                XposedHelpers.findAndHookMethod("android.telephony.TelephonyManager",
+                        lpparm.classLoader, "listen", phoneStateListenerClass, int.class, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+
+                        /**
+                         * 0 represents LISTEN_NONE
+                         */
+                        param.args[1] = 0;
+
+                        if (logOn) {
+                            XposedBridge.log(packageName + " android.telephony.TelephonyManager.listen Blocked\n");
+                        }
+                    }
+                });
+                break;
         }
 
 
