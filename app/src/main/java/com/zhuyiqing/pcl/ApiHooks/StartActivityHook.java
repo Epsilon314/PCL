@@ -15,6 +15,13 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
+
+/**
+ * startActivity is an abstract method which can not be hooked, but we can find a proper implement to hook,
+ * saying android.content.ContextWrapper.startActivity
+ *
+ * It is a frequently called method so do be careful when changing it, for it will effect almost all apps
+ */
 public class StartActivityHook {
 
     public static void hookStartActivity(ClassLoader classLoader, final String intentAction,

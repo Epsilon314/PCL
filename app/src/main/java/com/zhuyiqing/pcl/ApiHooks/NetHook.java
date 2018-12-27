@@ -11,7 +11,6 @@ package com.zhuyiqing.pcl.ApiHooks;
 
 import com.zhuyiqing.pcl.HookModule.ApiCallCtrl;
 import com.zhuyiqing.pcl.HookModule.ApiCallCtrl.*;
-import com.zhuyiqing.pcl.HookModule.ApiCallLog;
 import com.zhuyiqing.pcl.HookModule.ApiCallReturnValue;
 
 import java.net.InetAddress;
@@ -24,6 +23,11 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+
+/**
+ * hook network related methods
+ */
+
 public class NetHook implements HookBase{
 
     public static NetHook getInstance() {
@@ -35,10 +39,15 @@ public class NetHook implements HookBase{
                            ApiCallCtrl ctrl,
                            ApiCallReturnValue returnValue) throws Throwable{
 
-        //XposedBridge.log("Network");
+
 
         final String packageName = lpparm.packageName;
 
+        /**
+         * ConnectivityManager can be achieved through a system service, and NetworkInfo can be achieved
+         * through ConnectivityManager. Hooking them shall affect app using ConnectivityManager to get access
+         * to network.
+         */
 
         HookMethod.startHook(ctrl, returnValue, packageName,
                 "android.net.NetworkInfo", lpparm.classLoader,
@@ -78,14 +87,14 @@ public class NetHook implements HookBase{
                 "isActiveNetworkMetered",  null);
 
 
-
-        // getAllByName is a static method which returns an InetAddress instance and
-        // class InetAddress's constructor(s) and all fields are private and i don't konw their name
-        // Todo: reflect to find them
-        // now we simply change its parameter to null so that the method will return an instance
-        // representing the loopback address which stop its original intent
-        // Todo: check related AOSP code to find more delicate hook ways to do this
-
+        /**
+         * getAllByName is a static method which returns an InetAddress instance and
+         * class InetAddress's constructor(s) and all fields are private and i don't konw their name
+         * Todo: reflect to find them
+         * now we simply change its parameter to null so that the method will return an instance
+         * representing the loopback address which stop its original intent
+         * Todo: check related AOSP code to find more delicate hook ways to do this
+         */
         final Boolean logOn1 = ctrl.getInformPolicy(packageName, "java.net.InetAddress.getAllByName"
                 , String.class);
 
@@ -114,7 +123,9 @@ public class NetHook implements HookBase{
 
             case ApiCallCtrlPolicy.BLOCK:
 
-
+                /**
+                 * will affect apps using host name to connect to their server
+                 */
                 XposedHelpers.findAndHookMethod("java.net.InetAddress", lpparm.classLoader,
                         "getAllByName", String.class, new XC_MethodHook() {
 

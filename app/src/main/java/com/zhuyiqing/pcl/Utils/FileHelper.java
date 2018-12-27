@@ -15,6 +15,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 
+
+/**
+ * base class for reading and writing file
+ */
 public class FileHelper {
 
     protected static final String filePath = "/data/system/xposed_pcl";
@@ -115,6 +119,12 @@ public class FileHelper {
         return res;
     }
 
+    /**
+     * if don't have access permission, ask for su
+     * never call this from hook method, or it will grant su to the hooked package
+     * @param dir
+     * @return
+     */
     private static boolean getRoot(String dir) {
         Process process = null;
         DataOutputStream outputStream = null;

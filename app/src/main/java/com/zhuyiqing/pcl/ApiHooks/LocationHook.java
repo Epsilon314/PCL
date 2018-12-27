@@ -15,7 +15,10 @@ import com.zhuyiqing.pcl.HookModule.ApiCallReturnValue;
 
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-
+/**
+ * Hook location
+ * Todo: hook more location provider
+ */
 public class LocationHook implements HookBase{
 
     public static LocationHook getInstance() {

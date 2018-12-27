@@ -18,8 +18,10 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 
 
-// will be called from app thread, so don't use anything from Xposed here
-
+/** will be called from app thread, so don't use anything from Xposed here
+ *  not used
+ *
+ */
 public class DbHelper extends SQLiteOpenHelper {
 
     public static final Integer Version = 1;

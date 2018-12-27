@@ -16,8 +16,25 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
+/**
+ * simple hook pattern method
+ */
 public class HookMethod {
 
+
+
+    /**
+     *
+     * @param className class to be hooked
+     * @param classLoader
+     * @param methodName method to be hooked
+     * @param parameterType one parameter, null is does't has one
+     * @param returnValue forged return value used after calling the original method
+     * @param earlyReturnValue forged return value used when you don't what to call the original method
+     * @param packageName package who call the hooked method
+     * @param logResult extra information to be logged
+     * @param logEnable if log is on
+     */
     private static void hookMethod(final String  className, ClassLoader classLoader,
                                    final String  methodName, Class parameterType,
                                    final Object returnValue, final Object earlyReturnValue,
@@ -34,6 +51,10 @@ public class HookMethod {
                                 logResult);
                     }
 
+                    /**
+                     * setting a result in beforeHookedMethod will set the early return flag and the
+                     * original method will not be called
+                     */
                     if (null != earlyReturnValue) {
                         param.setResult(earlyReturnValue);
                     }
@@ -80,7 +101,16 @@ public class HookMethod {
         }
     }
 
-
+    /**
+     *
+     * @param apiCallCtrl
+     * @param apiCallReturnValue
+     * @param packageName
+     * @param className
+     * @param classLoader
+     * @param methodName
+     * @param parameterType
+     */
     public static void startHook(ApiCallCtrl apiCallCtrl, ApiCallReturnValue apiCallReturnValue,
                                  String packageName, String className, ClassLoader classLoader,
                                  String methodName, Class parameterType) {

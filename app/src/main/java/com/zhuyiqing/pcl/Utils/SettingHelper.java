@@ -10,11 +10,16 @@ package com.zhuyiqing.pcl.Utils;
 
 import java.util.Vector;
 
+/**
+ * save custom settings to file
+ * those settings will be activated after reboot
+ */
 public class SettingHelper extends FileHelper{
 
     private static final String fileName = "/setting";
     private static final String packageNameFileName = "/packages";
     private static final String packageTempFileName = "/packagesTemp";
+    private static final String globalPolicyFileName = "/globalSetting";
 
     public static void saveSettingFile(String item) {
         writeFileReplace(item, fileName);
@@ -64,6 +69,24 @@ public class SettingHelper extends FileHelper{
             return res;
         }
         else  return null;
+    }
+
+    public static void writeGlobalPolicy(int globalPolicy, int globalInfoLevel) {
+        writeFileReplace(globalPolicy + "," + globalInfoLevel, globalPolicyFileName);
+    }
+
+    public static int[] getGlobalPolicy() throws Exception{
+        String res = readFile(globalPolicyFileName);
+        if (null != res) {
+            String[] policyString = res.split(",");
+            if (null != policyString && policyString.length == 2) {
+                int[] policyInt = new int[2];
+                policyInt[0] =  Integer.parseInt(policyString[0]);
+                policyInt[1] = Integer.parseInt(policyString[1]);
+                return policyInt;
+            }
+        }
+        throw new Exception();
     }
 
     public static void clearPackageNames() {

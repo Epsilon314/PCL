@@ -8,4 +8,7 @@
     <string name="system_method">System Method</string>
     <string name="policy">Policy</string>
     <string name="inform">Inform</string>
+    <string name="global_policy">Global Policy</string>
+    <string name="global_inform_level">Global Inform Level</string>
+    <string name="save">SAVE</string>
 </resources>

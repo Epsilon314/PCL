@@ -19,7 +19,7 @@ import de.robv.android.xposed.XposedBridge;
 
 
 /**
- * deprecated class,
+ * deprecated class, see ApiCallCtrl and LogHelper
  * Todo: will be merged into LogHelper
  */
 public class ApiCallLog {

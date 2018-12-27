@@ -20,14 +20,24 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 
-
-
+/**
+ * Hook Http
+ * log only
+ * Todo: add more ctrl to http data
+ */
 public class HttpHook implements HookBase{
+
 
     public static HttpHook getInstance() {
         return new HttpHook();
     }
 
+    /**
+     *
+     * @param lpparm load package parameter
+     * @param ctrl control class
+     * @param returnValue forged value
+     */
     @Override
     public void startHook(XC_LoadPackage.LoadPackageParam lpparm, ApiCallCtrl ctrl, ApiCallReturnValue returnValue) {
 

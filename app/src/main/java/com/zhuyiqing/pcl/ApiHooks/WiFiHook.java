@@ -10,12 +10,17 @@
 package com.zhuyiqing.pcl.ApiHooks;
 
 import com.zhuyiqing.pcl.HookModule.ApiCallCtrl;
-import com.zhuyiqing.pcl.HookModule.ApiCallLog;
 import com.zhuyiqing.pcl.HookModule.ApiCallReturnValue;
 
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+
+/**
+ * hook things related to wifi
+ * not working on simulator for free visions does not support wifi, sad
+ * Todo: test on real devices later
+ */
 public class WiFiHook implements HookBase{
 
     public static WiFiHook getInstance() {

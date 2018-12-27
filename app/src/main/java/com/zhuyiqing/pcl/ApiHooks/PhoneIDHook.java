@@ -14,6 +14,13 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+
+/**
+ * hook android id, IMEI
+ * those ids can be used as an unique device identifier
+ * this hook allow user to config them
+ */
+
 public class PhoneIDHook implements HookBase{
 
     public static PhoneIDHook getInstance() {
@@ -42,7 +49,7 @@ public class PhoneIDHook implements HookBase{
                         if (param.args[1].equals(Settings.Secure.ANDROID_ID)) {
                             if (logAndroidID) {
                                 XposedBridge.log(packageName +
-                                        " android.provider.Settings.Secure.getString.ANDROID_ID Allow");
+                                        " android.provider.Settings.Secure.getString.ANDROID_ID Allowed");
                             }
                         }
                     }

@@ -17,6 +17,10 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+
+/**
+ * hook message
+ */
 public class SMSHook implements HookBase{
 
     public static SMSHook getInstance() {
@@ -47,6 +51,9 @@ public class SMSHook implements HookBase{
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 
+                        /**
+                         * get destination address, source address, and text to be sent from parameters
+                         */
                         String destAddress = (String) param.args[0];
                         String sourceAddress = (String) param.args[1];
                         String textToBeSent = (String) param.args[2];
@@ -80,6 +87,8 @@ public class SMSHook implements HookBase{
                                 sourceAddress + "\n Content:\n" + textToBeSent +"\n" + "Blocked");
 
                         }
+
+                        /** stop the original method from being called */
 
                         param.setResult(null);
 

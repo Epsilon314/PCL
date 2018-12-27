@@ -40,6 +40,10 @@ public class HookMain implements IXposedHookZygoteInit, IXposedHookLoadPackage{
 
         //XposedBridge.log("PCL handleLoadPackage" + lpparam.packageName);
 
+
+        /**
+         * bypass android system and self
+         */
         if (lpparam.packageName.startsWith("android")) {
             return;
         }

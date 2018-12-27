@@ -12,6 +12,9 @@ import android.util.ArrayMap;
 import com.zhuyiqing.pcl.Utils.SettingHelper;
 
 
+/**
+ *  manage access policies and inform policies
+ */
 public class ApiCallCtrl {
 
     public static class ApiCallCtrlPolicy {
@@ -35,14 +38,40 @@ public class ApiCallCtrl {
         loadPolicy();
     }
 
+    /**
+     * store all policies in the form of key-value in an array-map
+     * the number of policies are estimated to be like tens to hundreds and the type of key is String,
+     * so array-map shall be the fittest
+     */
     private ArrayMap<String, PolicyPack> currentPolicy = new ArrayMap<>();
 
+    /**
+     * policy used when no explicit settings are available, configurable
+     */
     private int defaultPolicy = ApiCallCtrlPolicy.ALLOW;
 
+
+    /**
+     * policy used when no explicit settings are available
+     */
     private int defaultInformLevel = LogInformLevel.MIDDLE;
 
-    private int currentInformLevel = LogInformLevel.HIGH;
 
+    /**
+     * minimal inform level an event shall have for it to be logged, configurable
+     */
+    private int currentInformLevel = LogInformLevel.MIDDLE;
+
+
+    /**
+     * get policy
+     * more specific rules overwrite less ones
+     * in detail, specific rules overwrite rules with wildcards overwrite global ones
+     * @param appName
+     * @param apiName
+     * @param parameterType
+     * @return
+     */
     public int getPolicy(String appName, String apiName, Object... parameterType) {
 
         int policy = defaultPolicy;
@@ -64,6 +93,15 @@ public class ApiCallCtrl {
         return policy;
     }
 
+    /**
+     *  get policy
+     *  more specific rules overwrite less ones
+     *  in detail, specific rules overwrite rules with wildcards overwrite global ones
+     * @param appName
+     * @param apiName
+     * @param parameterType
+     * @return
+     */
     public boolean getInformPolicy(String appName, String apiName, Object... parameterType) {
 
         int level = defaultInformLevel;
@@ -86,11 +124,13 @@ public class ApiCallCtrl {
         else return false;
     }
 
-    public void setCurrentInformLevel(int currentInformLevel) {
-        this.currentInformLevel = currentInformLevel;
-    }
 
+    /**
+     * load saved settings after default ones to overwrite conflicts
+     * save after load removes duplication in the settings file
+     */
     private void loadPolicy() {
+        loadSavedGlobalSetting();
         loadDefaultPolicy();
         loadSavedSetting();
         saveSetting();
@@ -124,43 +164,53 @@ public class ApiCallCtrl {
         }
     }
 
+    private void loadSavedGlobalSetting() {
+        try{
+            int[] settings = SettingHelper.getGlobalPolicy();
+            defaultPolicy = settings[0];
+            currentInformLevel = settings[1];
+        }catch (Exception e) {
+
+        }
+    }
+
 
     private void loadDefaultPolicy() {
 
         loadHelper("* android.net.NetworkInfo.getDetailedState", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* android.net.NetworkInfo.getExtraInfo", ApiCallCtrlPolicy.BLOCK, LogInformLevel.MIDDLE);
-        loadHelper("* android.net.NetworkInfo.isConnected", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
-        loadHelper("* android.net.ConnectivityManager.getActiveNetworkInfo", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* android.net.ConnectivityManager.getNetworkInfo", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
-        loadHelper("* android.net.ConnectivityManager.getDefaultProxy", ApiCallCtrlPolicy.BLOCK, LogInformLevel.MIDDLE);
+        loadHelper("* android.net.NetworkInfo.getExtraInfo", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
+        loadHelper("* android.net.NetworkInfo.isConnected", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
+        loadHelper("* android.net.ConnectivityManager.getActiveNetworkInfo", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
+        loadHelper("* android.net.ConnectivityManager.getNetworkInfo", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
+        loadHelper("* android.net.ConnectivityManager.getDefaultProxy", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
         loadHelper("* android.net.ConnectivityManager.getRestrictBackgroundStatus", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
         loadHelper("* android.net.ConnectivityManager.isActiveNetworkMetered", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
-        loadHelper("* android.net.wifi.WifiManager.addNetwork", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* android.net.wifi.WifiManager.disconnect", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* android.net.wifi.WifiManager.getConfiguredNetworks", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* android.net.wifi.WifiManager.getWifiState", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* android.net.wifi.WifiManager.isWifiEnabled", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* android.net.wifi.WifiManager.reconnect", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
-        loadHelper("* android.net.wifi.WifiManager.removeNetwork", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* android.net.wifi.WifiManager.setWifiEnabled", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* android.net.wifi.WifiManager.updateNetwork", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* java.net.InetAddress.getAllByName", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
-        loadHelper("* java.net.NetworkInterface.getNetworkInterfaces", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
+        loadHelper("* android.net.wifi.WifiManager.addNetwork", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
+        loadHelper("* android.net.wifi.WifiManager.disconnect", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
+        loadHelper("* android.net.wifi.WifiManager.getConfiguredNetworks", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
+        loadHelper("* android.net.wifi.WifiManager.getWifiState", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
+        loadHelper("* android.net.wifi.WifiManager.isWifiEnabled", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
+        loadHelper("* android.net.wifi.WifiManager.reconnect", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
+        loadHelper("* android.net.wifi.WifiManager.removeNetwork", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
+        loadHelper("* android.net.wifi.WifiManager.setWifiEnabled", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
+        loadHelper("* android.net.wifi.WifiManager.updateNetwork", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
+        loadHelper("* java.net.InetAddress.getAllByName", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
+        loadHelper("* java.net.NetworkInterface.getNetworkInterfaces", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
         loadHelper("* android.net.wifi.WifiInfo.getBSSID", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
-        loadHelper("* android.net.wifi.WifiInfo.getSSID", ApiCallCtrlPolicy.BLOCK, LogInformLevel.LOW);
+        loadHelper("* android.net.wifi.WifiInfo.getSSID", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
         loadHelper("* android.net.wifi.WifiInfo.getDetailedStateOf", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
         loadHelper("* android.net.wifi.WifiInfo.getIpAddress", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
         loadHelper("* android.net.wifi.WifiInfo.getMacAddress", ApiCallCtrlPolicy.ALLOW, LogInformLevel.LOW);
-        loadHelper("* android.telephony.SmsManager.sendTextMessage", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
+        loadHelper("* android.telephony.SmsManager.sendTextMessage", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
         loadHelper("* android.content.ContextWrapper.startActivityandroid.intent.action.CALL", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
         loadHelper("* android.content.ContextWrapper.startActivityandroid.intent.action.NEW_OUTGOING_CALL", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
         loadHelper("* android.content.ContextWrapper.startActivityandroid.intent.action.DIAL", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
-        loadHelper("* java.net.HttpURLConnection", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
-        loadHelper("* android.telephony.TelephonyManager.listen", ApiCallCtrlPolicy.BLOCK, LogInformLevel.HIGH);
-        loadHelper("* android.location.Location.getLatitude", ApiCallCtrlPolicy.FORGE, LogInformLevel.HIGH);
-        loadHelper("* android.location.Location.getLongitude", ApiCallCtrlPolicy.FORGE, LogInformLevel.HIGH);
-        loadHelper("* android.provider.Settings.Secure.getString.ANDROID_ID", ApiCallCtrlPolicy.FORGE, LogInformLevel.HIGH);
-        loadHelper("* android.telephony.TelephonyManager.getDeviceId", ApiCallCtrlPolicy.FORGE, LogInformLevel.HIGH);
+        loadHelper("* java.net.HttpURLConnection", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
+        loadHelper("* android.telephony.TelephonyManager.listen", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
+        loadHelper("* android.location.Location.getLatitude", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
+        loadHelper("* android.location.Location.getLongitude", ApiCallCtrlPolicy.ALLOW, LogInformLevel.HIGH);
+        loadHelper("* android.provider.Settings.Secure.getString.ANDROID_ID", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
+        loadHelper("* android.telephony.TelephonyManager.getDeviceId", ApiCallCtrlPolicy.ALLOW, LogInformLevel.MIDDLE);
     }
 
     public static String[] CtrlApiList = {

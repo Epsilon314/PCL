@@ -13,6 +13,9 @@ import com.zhuyiqing.pcl.BuildConfig;
 
 import de.robv.android.xposed.XSharedPreferences;
 
+/**
+ * not used
+ */
 public class PreferenceUtils {
 
     public static XSharedPreferences instance = null;

@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.zhuyiqing.pcl.HookModule.ApiCallCtrl;
@@ -24,16 +23,21 @@ import com.zhuyiqing.pcl.Utils.SettingHelper;
 
 public class SettingActivity extends AppCompatActivity {
 
-    private LinearLayout settings;
     private Spinner packageSpin;
     private Spinner apiSpin;
     private Spinner policySpin;
     private Spinner infoSpin;
 
+    private Spinner globalPolicySpin;
+    private Spinner globalInfoSpin;
+
     private String currentPackage = "";
     private String currentApi = "";
     private int currentPolicy = -1;
     private int currentInfo = -1;
+
+    private int currentGlobalPolicy = -1;
+    private int currentGlobalInfo = -1;
 
     private String[] policySet = {"Allow", "Block", "Forge"};
     private String[] infoSet = {"Low", "Middle", "High"};
@@ -43,11 +47,14 @@ public class SettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
-        settings = findViewById(R.id.settingsLayout);
+
         packageSpin = findViewById(R.id.PackageSpin);
         apiSpin = findViewById(R.id.ApiSpin);
         policySpin = findViewById(R.id.PolicySpin);
         infoSpin = findViewById(R.id.InfoSpin);
+
+        globalPolicySpin = findViewById(R.id.spPolicy);
+        globalInfoSpin = findViewById(R.id.spInfo);
 
         Button saveButton = findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +64,16 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
+        Button globalSaveButton = findViewById(R.id.buttonGlobal);
+        globalSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setGlobalPolicyHelper();
+            }
+        });
+
         generateSettingItem();
+        generateGlobalSettingItems();
 
     }
 
@@ -128,12 +144,51 @@ public class SettingActivity extends AppCompatActivity {
 
     }
 
+    private void generateGlobalSettingItems() {
+
+        final ArrayAdapter<String> globalPolicyAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, policySet);
+        globalPolicyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        globalPolicySpin.setAdapter(globalPolicyAdapter);
+        globalPolicySpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentGlobalPolicy = i;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        final ArrayAdapter<String> globalInfoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, infoSet);
+        globalInfoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        globalInfoSpin.setAdapter(globalInfoAdapter);
+        globalInfoSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentGlobalInfo = i;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
     private void setPolicyHelper() {
         if (currentPackage != "" && currentApi != "" && currentPolicy != -1 && currentInfo != -1) {
 
             String item = currentPackage + " " + currentApi + "," + currentPolicy + "," + currentInfo + "\n";
             SettingHelper.saveSettingFileAppend(item);
 
+        }
+    }
+
+    private void setGlobalPolicyHelper() {
+        if (currentGlobalInfo != -1 && currentGlobalPolicy != -1) {
+            SettingHelper.writeGlobalPolicy(currentGlobalPolicy, currentGlobalInfo);
         }
     }
 

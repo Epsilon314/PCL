@@ -13,7 +13,6 @@ package com.zhuyiqing.pcl.ApiHooks;
 import android.content.Intent;
 
 import com.zhuyiqing.pcl.HookModule.ApiCallCtrl;
-import com.zhuyiqing.pcl.HookModule.ApiCallLog;
 import com.zhuyiqing.pcl.HookModule.ApiCallReturnValue;
 
 
@@ -21,6 +20,11 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+
+/**
+ * hook telephony
+ * not working in simulator for it does not actually dial... Todo: test on real devices later
+ */
 
 public class TelephonyHook implements HookBase{
 
